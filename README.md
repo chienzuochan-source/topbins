@@ -2,7 +2,7 @@
 
 A browser football game. It's six-a-side, Reds against Blues. It started as Fairgreens, a golf game, and the golf swing's power bar and strike bar are now how you shoot.
 
-**Play it:** once it's published (see *Publishing* below), the game is at `https://<your-github-name>.github.io/top-bins/`.
+**Play it: https://chienzuochan-source.github.io/topbins/**
 
 ## Run it
 

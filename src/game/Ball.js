@@ -74,8 +74,9 @@ export class Ball {
 }
 
 // Speed to roll a ground pass d metres and still arrive at `arrive` m/s.
-export function groundPassSpeed(d, arrive = 4) {
-  return Math.min(24, Math.sqrt(arrive * arrive + 2 * ROLL_DECEL * d));
+// Passes are zipped in hard, so they reach a teammate almost at once.
+export function groundPassSpeed(d, arrive = 16) {
+  return Math.min(32, Math.sqrt(arrive * arrive + 2 * ROLL_DECEL * d));
 }
 
 // Seconds for a rolling ball kicked at v0 to cover d metres.
@@ -87,5 +88,5 @@ export function groundTravelTime(d, v0) {
 
 // Hang time for a lofted pass of d metres.
 export function loftTime(d) {
-  return clamp(0.6 + d / 24, 0.8, 2.1);
+  return clamp(0.35 + d / 40, 0.55, 1.3);
 }

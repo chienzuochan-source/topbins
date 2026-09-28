@@ -41,7 +41,7 @@ test('a ground pass arrives at about the planned speed', () => {
   const t = groundTravelTime(20, v0);
   for (let s = 0; s < t; s += 1 / 240) b.step(1 / 240);
   assert.ok(Math.abs(b.pos.x - 20) < 0.5, `rolled ${b.pos.x}`);
-  assert.ok(Math.abs(b.speed - 4) < 0.3);
+  assert.ok(Math.abs(b.speed - 16) < 0.3);
 });
 
 test('kick-off waits for the whistle, then play starts', () => {
@@ -216,4 +216,27 @@ test('the computer gets better as the setting goes up', () => {
   const m = new Match({ skill: 'hard' });
   assert.equal(m.teams[1].skill, SKILL.hard, 'the computer side');
   assert.equal(m.teams[0].skill, SKILL.normal, 'your teammates stay normal');
+});
+
+test('E passes to the nearest teammate, and it gets there fast', () => {
+  const m = new Match({ rng: mulberry32(20) });
+  run(m, 1.2);
+  const me = m.human;
+  const mates = m.teams[0].players.filter((p) => p !== me && !p.isKeeper);
+  // Put one teammate close behind you and the rest far away in front.
+  mates.forEach((p, i) => (p.pos = { x: me.pos.x + 20 + i * 3, z: 10 }));
+  const near = mates[0];
+  near.pos = { x: me.pos.x - 8, z: me.pos.z + 2 };
+  near.vel = { x: 0, z: 0 };
+  for (const o of m.teams[1].players) o.pos = { x: o.pos.x, z: -20 };
+  m.update(1 / 60, input({ pass: true, move: { x: 1, z: 0 } }));
+  assert.equal(m.ball.pass.to, near, 'nearest, even though you were pressing the other way');
+  let t = 0;
+  while (m.ball.owner !== near && t < 3) {
+    near.want = { x: 0, z: 0 };
+    m.update(1 / 60);
+    t += 1 / 60;
+  }
+  assert.equal(m.ball.owner, near, 'they got it');
+  assert.ok(t < 0.8, `8 m pass took ${t.toFixed(2)} s`);
 });

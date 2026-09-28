@@ -353,6 +353,16 @@ export class Match {
   }
 
   humanPass(p, input, loft) {
+    // E: straight to the nearest teammate (not the keeper).
+    if (!loft) {
+      let near = null;
+      for (const m of p.team.players) {
+        if (m === p || m.isKeeper) continue;
+        if (!near || dist(m.pos, p.pos) < dist(near.pos, p.pos)) near = m;
+      }
+      if (near) return this.passTo(p, near, false);
+    }
+    // Q: a lofted ball to the teammate you're facing, or the way you're pressing.
     let dx = input.move.x, dz = input.move.z;
     if (!dx && !dz) (dx = Math.cos(p.face)), (dz = Math.sin(p.face));
     const n = Math.hypot(dx, dz);
@@ -780,7 +790,9 @@ export class Match {
       if (this.rng() < 0.55) return this.deflect(best, 'block');
       return;
     }
-    if (!best.isKeeper && speed > 20) return this.deflect(best, 'block');
+    // A pass meant for you always sticks, however hard it's hit.
+    const meantForMe = b.pass && b.pass.to === best;
+    if (!best.isKeeper && speed > 20 && !meantForMe) return this.deflect(best, 'block');
     this.gain(best);
   }
 

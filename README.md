@@ -31,8 +31,8 @@ Both settings are remembered.
 | --- | --- |
 | `W` `A` `S` `D` (or the arrow keys) | Run. You control the player with the ring round their feet. |
 | `Shift` | Sprint. It uses up stamina, which comes back while you jog. |
-| `E` | Pass along the ground. It goes to the teammate you're facing, or the way you're pressing. |
-| `Q` | Lofted pass over the defenders. |
+| `E` | Pass along the ground to your nearest teammate. Passes are hit hard, so they get there almost at once. |
+| `Q` | Lofted pass over the defenders, to the teammate you're facing or the way you're pressing. |
 | `Space` | Shoot (see below). |
 | `T` | Slide tackle. |
 | `C` | Switch player. Press it again to go to the next nearest. |

@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#123320" />
+    <title>Top Bins</title>
+    <meta name="description" content="A browser football game: run, pass, slide in and time your strike. Play the computer, a friend on the same keyboard, or a friend online." />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='white' stroke='%23222' stroke-width='2'/><path d='M16 10l5 3.5-2 6h-6l-2-6z' fill='%23222'/></svg>" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./src/style.css" />
+  </head>
+  <body>
+    <canvas id="scene"></canvas>
+    <div id="hud"></div>
+    <div id="touch"></div>
+    <div id="rotate">Turn your phone sideways for a bigger view of the pitch</div>
+
+    <!-- Home screen -->
+    <div id="home" class="overlay show screen">
+      <div class="home">
+        <div class="brand">
+          <h1>Top Bins</h1>
+          <p class="tag">Six-a-side football. Time your strike.</p>
+        </div>
+        <nav class="menu">
+          <button class="big-btn primary" data-go="cpu">
+            <b>Play the computer</b><span>You're the Reds. Beat the Blues.</span>
+          </button>
+          <button class="big-btn" data-go="multi">
+            <b>Multiplayer</b><span>A friend online, or on the same keyboard</span>
+          </button>
+          <button class="big-btn ghost" data-go="howto">
+            <b>How to play</b><span>Controls for keyboard and touch</span>
+          </button>
+        </nav>
+        <section class="settings glass">
+          <div class="set">
+            <span class="k" id="skill-k">Computer</span>
+            <div class="seg" role="radiogroup" aria-labelledby="skill-k" id="skill">
+              <button role="radio" data-v="easy">Easy</button>
+              <button role="radio" data-v="normal">Normal</button>
+              <button role="radio" data-v="hard">Hard</button>
+              <button role="radio" data-v="legend">Legend</button>
+            </div>
+          </div>
+          <p class="set-desc muted" id="skill-desc"></p>
+          <div class="set">
+            <span class="k" id="len-k">Match</span>
+            <div class="seg" role="radiogroup" aria-labelledby="len-k" id="length">
+              <button role="radio" data-v="120">2 min</button>
+              <button role="radio" data-v="240">4 min</button>
+              <button role="radio" data-v="360">6 min</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Multiplayer -->
+    <div id="multi" class="overlay screen">
+      <div class="card glass">
+        <button class="back" data-go="home" aria-label="Back">‹ Back</button>
+        <h2>Multiplayer</h2>
+        <div class="mp-grid">
+          <section class="mp-box">
+            <h3>Online</h3>
+            <p class="muted">Two players, two devices. Whoever makes the room plays the Reds. Their friend joins with the code and plays the Blues.</p>
+            <button class="primary" id="mp-create">Make a room</button>
+            <div class="join-row">
+              <label class="sr" for="mp-code">Room code</label>
+              <input id="mp-code" maxlength="6" placeholder="CODE" autocapitalize="characters" autocomplete="off" spellcheck="false" />
+              <button class="secondary" id="mp-join">Join</button>
+            </div>
+            <p class="mp-status" id="mp-status" role="status"></p>
+          </section>
+          <section class="mp-box" id="local-box">
+            <h3>Same keyboard</h3>
+            <p class="muted">Two players, one keyboard. <b class="red-t">Reds</b> use <kbd>WASD</kbd> and <b class="blue-t">Blues</b> use the <kbd>arrow keys</kbd>. See <em>How to play</em> for the rest.</p>
+            <button class="secondary" data-go="local2">Play on one keyboard</button>
+            <p class="muted small touch-only">This needs a keyboard, so it won't work on a phone or tablet.</p>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <!-- Online lobby -->
+    <div id="lobby" class="overlay screen">
+      <div class="card glass small">
+        <h2 id="lobby-title">Your room</h2>
+        <p class="code mono" id="lobby-code">····</p>
+        <p class="muted" id="lobby-text">Waiting for your friend to join…</p>
+        <div class="row-btns" id="lobby-share">
+          <button class="secondary" id="copy-link">Copy invite link</button>
+        </div>
+        <p class="muted small" id="lobby-link"></p>
+        <div class="spinner"></div>
+        <button class="ghost-btn" id="lobby-cancel">Cancel</button>
+      </div>
+    </div>
+
+    <!-- How to play -->
+    <div id="howto" class="overlay screen">
+      <div class="card glass">
+        <button class="back" data-go="home" aria-label="Back">‹ Back</button>
+        <h2>How to play</h2>
+        <ul class="keys">
+          <li><b class="k"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></b><span>Run. You control the player with the ring round their feet.</span></li>
+          <li><b class="k"><kbd>Shift</kbd></b><span>Sprint. It uses stamina, which comes back while you jog.</span></li>
+          <li><b class="k"><kbd>E</kbd></b><span>Pass along the ground to the teammate you're facing, or the way you're pressing.</span></li>
+          <li><b class="k"><kbd>Q</kbd></b><span>Lofted pass, over the defenders' heads.</span></li>
+          <li><b class="k"><kbd>Space</kbd></b><span><b>Shoot.</b> Hold it and the power bar fills (past 100% it flies over the bar). Let go and the strike needle runs. Press it again while the needle's in the green. The gold middle is a perfect strike. Too early and you sky it, too late and you scuff it. Hold <kbd>W</kbd> or <kbd>S</kbd> as you strike to pick a post.</span></li>
+          <li><b class="k"><kbd>T</kbd></b><span><b>Slide tackle.</b> Get the ball and it's yours to chase. Get the player and not the ball and it's a free kick.</span></li>
+          <li><b class="k"><kbd>C</kbd></b><span>Switch player. Press it again to go to the next nearest.</span></li>
+          <li><b class="k"><kbd>P</kbd></b><span>Pause. <kbd>M</kbd> mutes.</span></li>
+        </ul>
+        <h3>On a phone or tablet</h3>
+        <p class="muted">Put your left thumb anywhere on the left side and move it to run. The buttons on the right do the rest: <b>Shoot</b> works like <kbd>Space</kbd> (hold, let go, tap). Buttons that don't do anything right now are dimmed.</p>
+        <h3>Two on one keyboard</h3>
+        <p class="muted"><b class="blue-t">Blues</b>: arrow keys run, <kbd>Right Shift</kbd> sprint, <kbd>K</kbd> pass, <kbd>J</kbd> lob, <kbd>L</kbd> shoot, <kbd>U</kbd> slide, <kbd>I</kbd> switch. <b class="red-t">Reds</b> use the keys above, with <kbd>Left Shift</kbd> to sprint.</p>
+        <h3>Kick-offs and restarts</h3>
+        <p class="muted">At a kick-off the other team stays in its own half, out of the centre circle, until you play the ball. On a kick-off, throw-in or corner you have to pass it. On a free kick you can shoot.</p>
+      </div>
+    </div>
+
+    <div id="paused" class="overlay">
+      <div class="card glass small">
+        <h2>Paused</h2>
+        <div class="col-btns">
+          <button class="primary" id="resume">Resume</button>
+          <button class="ghost-btn" id="quit">Quit to menu</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="fulltime" class="overlay">
+      <div class="card glass small">
+        <h2>Full time</h2>
+        <p class="final mono"></p>
+        <p class="verdict"></p>
+        <div class="col-btns">
+          <button class="primary" id="again">Play again</button>
+          <button class="ghost-btn" id="menu">Menu</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="notice" class="overlay">
+      <div class="card glass small">
+        <h2 id="notice-title">Match over</h2>
+        <p id="notice-text"></p>
+        <button class="primary" id="notice-ok">Back to menu</button>
+      </div>
+    </div>
+
+    <div id="nogl" class="overlay">
+      <div class="card glass small">
+        <h2>No 3D here</h2>
+        <p>This browser can't draw 3D graphics (WebGL is off or missing). Try an up-to-date Chrome, Firefox, Edge or Safari.</p>
+      </div>
+    </div>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
